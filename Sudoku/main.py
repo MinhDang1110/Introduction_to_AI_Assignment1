@@ -1,20 +1,32 @@
 import random
 import copy
+import colorama
+from colorama import Fore, Style
 from solver_dfs import run_dfs
 from solver_heuristic import run_heuristic
 
+# Khởi tạo colorama
+colorama.init(autoreset=True)
 
 # =========================
 # PRINT BOARD
 # =========================
-def print_board(board):
+def print_board(board, original_board=None):
     for r in range(9):
         if r % 3 == 0 and r != 0:
-            print("-"*21)
+            print("-" * 21)
         for c in range(9):
             if c % 3 == 0 and c != 0:
                 print("|", end=" ")
-            print(board[r][c], end=" ")
+            
+            val = board[r][c]
+            # Nếu có bảng gốc, ô ban đầu trống (0) và ô hiện tại có số -> Đây là số mới điền
+            if original_board and original_board[r][c] == 0 and val != 0:
+                print(f"{Fore.GREEN}{val}{Style.RESET_ALL}", end=" ")
+            elif val == 0:
+                print(".", end=" ") # In dấu chấm cho ô trống nhìn cho thoáng
+            else:
+                print(val, end=" ")
         print()
 
 
@@ -178,15 +190,22 @@ def main():
             run_solver(board)
 
         else:
-            # 🔥 CHỌN 1 LẦN DUY NHẤT
+
             print("\nChọn giải thuật:")
             print("1. DFS")
             print("2. Heuristic")
             algo = input(">> ")
 
-            visual = input("In từng bước giải? (y/n): ").lower() == 'y'
+            print("Chế độ hiển thị:")
+            print("1. In tất cả bước")
+            print("2. Animation")
+            print("3. Không in")
 
-            # 🔥 chạy toàn bộ
+            mode = input(">> ")
+
+            visual = (mode != "3")
+            animate = (mode == "2")
+
             for name, board in sorted(boards.items()):
                 print(f"\n====================")
                 print(f"BOARD: {name}")
@@ -195,7 +214,8 @@ def main():
                 print("\n--- INPUT ---")
                 print_board(board)
 
-                run_solver_fixed(board, algo, visual)
+                # ĐÃ SỬA: Truyền đủ tham số animate
+                run_solver_fixed(board, algo, visual, animate)
 
 
 # =========================
@@ -207,37 +227,53 @@ def run_solver(board):
     print("2. Heuristic")
 
     algo = input(">> ")
-    visual = input("In từng bước giải? (y/n): ").lower() == 'y'
+    print("Chế độ hiển thị:")
+    print("1. In tất cả bước")
+    print("2. Animation")
+    print("3. Không in")
+
+    mode = input(">> ")
+
+    visual = (mode != "3")
+    animate = (mode == "2")
+    
+    # Lưu lại bảng gốc để tô màu số mới giải
+    original_board = copy.deepcopy(board)
 
     if algo == "1":
-        result, t, mem, nodes = run_dfs(board)
+        result, t, mem, nodes = run_dfs(board, visualize=visual, animate=animate) 
         name = "DFS"
     else:
-        result, t, mem, nodes = run_heuristic(board, visualize=visual)
+        result, t, mem, nodes = run_heuristic(board, visualize=visual, animate=animate)
         name = "Heuristic"
 
     print(f"\n--- SOLUTION ({name}) ---")
-    print_board(result)
+    print_board(result, original_board)
 
     if not visual:
         print(f"\nTime: {t:.6f}s")
         print(f"Memory: {mem:.2f} KB")
         print(f"Nodes: {nodes}")
-def run_solver_fixed(board, algo, visual):
+
+def run_solver_fixed(board, algo, visual, animate):
+    # Lưu lại bảng gốc để tô màu số mới giải
+    original_board = copy.deepcopy(board)
+    
     if algo == "1":
-        result, t, mem, nodes = run_dfs(board)
+        result, t, mem, nodes = run_dfs(board, visualize=visual, animate=animate)
         name = "DFS"
     else:
-        result, t, mem, nodes = run_heuristic(board, visualize=visual)
+        result, t, mem, nodes = run_heuristic(board, visualize=visual, animate=animate)
         name = "Heuristic"
 
     print(f"\n--- SOLUTION ({name}) ---")
-    print_board(result)
+    print_board(result, original_board)
 
     if not visual:
         print(f"\nTime: {t:.6f}s")
         print(f"Memory: {mem:.2f} KB")
         print(f"Nodes: {nodes}")
+
 
 if __name__ == "__main__":
     main()
