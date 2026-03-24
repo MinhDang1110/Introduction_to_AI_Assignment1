@@ -51,6 +51,7 @@ Introduction_to_AI_Assignment1/
 
 ## ⚙️ Cài đặt
 
+
 1. **Clone repository**
 
 ```bash
@@ -63,70 +64,88 @@ Python 3.8 trở lên
 Các thư viện chuẩn: copy, random, heapq, time, tracemalloc, os
 
 Không cần cài đặt thêm thư viện ngoài.
+```
+---
 
-🚀 Hướng dẫn chạy
-1. Sudoku
-Chạy file Sudoku_main.py:
+## 🚀 Hướng dẫn chạy
 
-bash
-python Sudoku_main.py
-Chọn input: Tạo Sudoku mới theo độ khó hoặc đọc từ file.
+### 1. Sudoku
 
-Chọn giải thuật: DFS hoặc Heuristic.
+Chạy file `main.py`:
 
-In từng bước giải: Tuỳ chọn xem quá trình giải chi tiết.
+```bash
+python Sudoku/main.py
+```
 
-Các board mẫu được lưu trong input.txt.
+* **Chọn input:** Tạo Sudoku mới theo độ khó hoặc đọc từ file.
+* **Chọn giải thuật:** DFS hoặc Heuristic.
+* **In từng bước giải:** Tùy chọn xem quá trình giải chi tiết.
 
-2. Chess Ranger
-Chạy file main.py:
+Các board mẫu được lưu trong `input.txt`.
 
-bash
-python main.py
-Chọn input: Nhập tay, đọc từ file, hoặc sinh ngẫu nhiên theo level (4 → 11).
+---
 
-Chọn giải thuật: DFS hoặc A* Heuristic.
+### 2. Chess Ranger
 
-Chương trình sẽ hiển thị: Bàn cờ ban đầu, từng bước ăn quân, thời gian, số node mở rộng và bộ nhớ sử dụng.
+Chạy file `main.py`:
 
-📊 Kết quả thực nghiệm
-Sudoku
-Độ khó	DFS (nodes)	Heuristic (nodes)	DFS (time)	Heuristic (time)
-Easy	~5000	~100	0.12s	0.003s
-Intermediate	~12000	~200	0.28s	0.005s
-Advanced	~25000	~400	0.65s	0.008s
-Evil	~50000	~800	1.20s	0.015s
-Chess Ranger
-Level	DFS (nodes)	A* (nodes)	DFS (time)	A* (time)
-4	150	45	0.02s	0.01s
-7	1200	120	0.15s	0.05s
-10	9500	380	1.10s	0.12s
-Heuristic giúp giảm số node mở rộng từ 10 đến 100 lần so với DFS.
+```bash
+python Chess_Ranger/main.py
+```
 
-🧠 Kỹ thuật sử dụng
-Sudoku (Heuristic)
-MRV (Minimum Remaining Values): Chọn ô có ít khả năng nhất.
+* **Chọn input:** Nhập tay, đọc từ file, hoặc sinh ngẫu nhiên theo level (4 → 11).
+* **Chọn giải thuật:** DFS hoặc A* Heuristic.
+* **Chương trình sẽ hiển thị:** Bàn cờ ban đầu, từng bước ăn quân, thời gian, số node mở rộng và bộ nhớ sử dụng.
 
-LCV (Least Constraining Value): Sắp xếp giá trị thử sao cho ít ảnh hưởng đến các ô khác.
+---
 
-Forward Checking: Loại bỏ giá trị không hợp lệ khỏi miền của các ô liên quan.
+## 📊 Kết quả thực nghiệm
 
-Chess Ranger (A*)
-Heuristic = số thành phần liên thông × 5 + khoảng cách trung bình × 3.
+### Sudoku
 
-Priority queue để luôn mở rộng trạng thái có f = g + h nhỏ nhất.
+| Độ khó       | DFS (nodes) | Heuristic (nodes) | DFS (time) | Heuristic (time) |
+| ------------ | ----------- | ----------------- | ---------- | ---------------- |
+| Easy         | ~5000       | ~100              | 0.12s      | 0.003s           |
+| Intermediate | ~12000      | ~200              | 0.28s      | 0.005s           |
+| Advanced     | ~25000      | ~400              | 0.65s      | 0.008s           |
+| Evil         | ~50000      | ~800              | 1.20s      | 0.015s           |
 
-Cache heuristic để tránh tính lại.
+### Chess Ranger
 
-🔧 Cải tiến trong tương lai
-Thiết kế heuristic admissible mạnh hơn cho Chess Ranger.
+| Level | DFS (nodes) | A* (nodes) | DFS (time) | A* (time) |
+| ----- | ----------- | ---------- | ---------- | --------- |
+| 4     | 150         | 45         | 0.02s      | 0.01s     |
+| 7     | 1200        | 120        | 0.15s      | 0.05s     |
+| 10    | 9500        | 380        | 1.10s      | 0.12s     |
 
-Áp dụng IDA* để giảm bộ nhớ.
+> Heuristic giúp giảm số node mở rộng từ 10 đến 100 lần so với DFS.
 
-Thử nghiệm với Beam Search và Learning-based heuristic.
+
+## 🧠 Kỹ thuật sử dụng
+
+### Sudoku (Heuristic)
+
+* **MRV (Minimum Remaining Values):** Chọn ô có ít khả năng nhất.
+* **LCV (Least Constraining Value):** Sắp xếp giá trị thử sao cho ít ảnh hưởng đến các ô khác.
+* **Forward Checking:** Loại bỏ giá trị không hợp lệ khỏi miền của các ô liên quan.
+
+### Chess Ranger (A*)
+
+* **Heuristic =** số thành phần liên thông × 5 + khoảng cách trung bình × 3.
+* **Priority queue** để luôn mở rộng trạng thái có f = g + h nhỏ nhất.
+* **Cache heuristic** để tránh tính lại.
+
+---
+
+## 🔧 Cải tiến trong tương lai
+
+* Thiết kế heuristic admissible mạnh hơn cho Chess Ranger.
+* Áp dụng IDA* để giảm bộ nhớ.
+* Thử nghiệm với Beam Search và Learning-based heuristic.
+
 
 👤 Tác giả
-Đặng Đình Minh Hoàng - 2411068
-Phan Ngọc Xuân Lợi - 2411969
-Phạm Phùng Đăng Khoa - 2433156
-Nguyễn Ngọc Trường Khang - 2411455
+* Đặng Đình Minh Hoàng - 2411068
+* Phan Ngọc Xuân Lợi - 2411969
+* Phạm Phùng Đăng Khoa - 2433156
+* Nguyễn Ngọc Trường Khang - 2411455
