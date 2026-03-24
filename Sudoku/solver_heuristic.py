@@ -1,21 +1,26 @@
 import time
 import tracemalloc
 import copy
+import os
 
 NODE_COUNT = 0
-VISUALIZE = False
 STEP = 0
-
+VISUALIZE = False
+ANIMATE = False
 
 # Print Board 
 def print_board(board):
     for r in range(9):
         if r % 3 == 0 and r != 0:
-            print("-"*21)
+            print("-" * 21)
         for c in range(9):
             if c % 3 == 0 and c != 0:
                 print("|", end=" ")
-            print(board[r][c], end=" ")
+            val = board[r][c]
+            if val == 0:
+                print(".", end=" ")
+            else:
+                print(val, end=" ")
         print()
 
 # get_neighbors
@@ -37,6 +42,18 @@ def get_neighbors():
 
 NEIGHBORS = get_neighbors()
 
+# CẢI TIẾN 1: Kiểm tra tính hợp lệ của đề bài ban đầu
+def is_initial_valid(board):
+    for r in range(9):
+        for c in range(9):
+            val = board[r][c]
+            if val != 0:
+                for (nr, nc) in NEIGHBORS[(r, c)]:
+                    if board[nr][nc] == val:
+                        return False
+    return True
+
+# CẢI TIẾN 2: Phát hiện sớm ô trống không thể điền số nào
 def init_domains(board):
     domains = {}
     for r in range(9):
@@ -45,6 +62,11 @@ def init_domains(board):
                 possible = set(range(1, 10))
                 for (nr, nc) in NEIGHBORS[(r, c)]:
                     possible.discard(board[nr][nc])
+                
+                # Nếu có ô trống mà tập domain bằng rỗng -> Chắc chắn vô nghiệm
+                if len(possible) == 0:
+                    return None 
+                
                 domains[(r, c)] = possible
     return domains
 
@@ -52,22 +74,19 @@ def select_mrv(domains):
     return min(domains.items(), key=lambda x: len(x[1]))
 
 def lcv_order(var, domains):
-    def impact(val): # hàm con để tính toán "độ sát thương" (impact) nếu ta quyết định điền con số val vào ô var.
-        return sum(1 for nb in NEIGHBORS[var] #duyệt qua tất cả các ô hàng xóm (nb) của ô hiện tại.
-                   if nb in domains and val in domains[nb]) #Chỉ xét những hàng xóm đang là ô trống (chưa được điền).
+    def impact(val):
+        return sum(1 for nb in NEIGHBORS[var] 
+                   if nb in domains and val in domains[nb])
     return sorted(domains[var], key=impact)
-# Cuối cùng, hàm trả về danh sách các con số có thể điền cho ô var, nhưng đã được sắp xếp tăng dần dựa theo độ impact. 
-# Số nào có impact nhỏ nhất (ít làm hại hàng xóm nhất) sẽ nằm ở đầu danh sách (vị trí index 0)
-# để vòng lặp for trong hàm solve lấy ra thử đầu tiên.
+
 
 # Forward Checking
 def forward_check(var, val, domains, removed):
-    for nb in NEIGHBORS[var]: # Duyệt qua tất cả 20 ô hàng xóm (cùng hàng, cột, khối 3x3) của ô var vừa được điền số val
-        
-        if nb in domains and val in domains[nb]: # Nếu láng giềng nb vẫn là ô trống và xui xẻo thay,trong danh sách các số nó đang định điền lại chứa đúng con số val mà ta vừa chốt.
+    for nb in NEIGHBORS[var]:
+        if nb in domains and val in domains[nb]:
             domains[nb].remove(val)
             removed.append((nb, val))
-            if not domains[nb]: #
+            if not domains[nb]:
                 return False
     return True
 
@@ -92,11 +111,17 @@ def solve(board, domains):
         board[r][c] = val
         STEP += 1
 
-
-        # Code để in ra các bước giải
+        # --- VISUALIZATION / ANIMATION ---
         if VISUALIZE:
+            if ANIMATE:
+                os.system('cls' if os.name == 'nt' else 'clear')
+
             print(f"\n--- STEP {STEP}: Fill (r={r}, c={c}) = {val} ---")
             print_board(board)
+            
+            if ANIMATE:
+                time.sleep(0.2)
+        # ---------------------------------
 
         removed = []
         saved = domains.pop(var)
@@ -110,28 +135,32 @@ def solve(board, domains):
         board[r][c] = 0
     return False
 
-def run_heuristic(board, visualize=False):
-    global NODE_COUNT, VISUALIZE, STEP
+def run_heuristic(board, visualize=False, animate=False):
+    global NODE_COUNT, VISUALIZE, STEP, ANIMATE
 
     NODE_COUNT = 0
     STEP = 0
     VISUALIZE = visualize
+    ANIMATE = animate
 
     b = copy.deepcopy(board)
-    domains = init_domains(b)
-
-    # ❗ nếu visualize → không đo performance
-    if VISUALIZE:
-        solve(b, domains)
-        return b, None, None, NODE_COUNT
-
+    
     tracemalloc.start()
     start = time.perf_counter()
 
-    solve(b, domains)
+    success = False
+    
+    # CẢI TIẾN: Chỉ bắt đầu giải nếu đề bài hợp lệ và có thể khởi tạo tập giá trị
+    if is_initial_valid(b):
+        domains = init_domains(b)
+        if domains is not None:
+            success = solve(b, domains)
 
     end = time.perf_counter()
     _, peak = tracemalloc.get_traced_memory()
     tracemalloc.stop()
+
+    if not success:
+        print("\n[!]BẢNG SUDOKU VÔ NGHIỆM (Vi phạm ràng buộc hoặc không thể giải)!")
 
     return b, end-start, peak/1024, NODE_COUNT
