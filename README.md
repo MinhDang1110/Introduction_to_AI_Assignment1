@@ -43,6 +43,8 @@ Introduction_to_AI_Assignment1/
 │   ├── solver_dfs.py             # Giải Sudoku bằng DFS
 │   ├── solver_heuristic.py       # Giải Sudoku bằng MRV + LCV + Forward Checking
 │
+├── Slide.pdf
+├── Report.pdf
 └── README.md                     # Tài liệu hướng dẫn
 ```
 
