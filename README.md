@@ -1,7 +1,7 @@
 # 🧠 Introduction to AI - Assignment 1
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/license/mit)
 
 ## 📌 Giới thiệu
 
@@ -14,6 +14,23 @@ Hai bài toán được áp dụng:
 
 1. **Sudoku** – giải Sudoku với kỹ thuật **CSP (Constraint Satisfaction Problem)**: MRV, LCV, Forward Checking.
 2. **Chess Ranger** – tìm đường ăn quân tối ưu trên bàn cờ vua 8x8.
+
+---
+## ✨ Tính năng mới trên GUI
+
+- **Giao diện Light Studio:** Thiết kế tông màu sáng (Light Grey/White) tối ưu cho các bộ quân cờ màu đen, giúp tăng độ tương phản và thẩm mỹ.
+
+- **Hệ thống Kéo - Thả (Drag & Drop):**
+  - **Tạo Input:** Kéo quân cờ trực tiếp từ "Kho quân cờ" vào vị trí bất kỳ trên bàn cờ.
+  - **Xóa quân cờ:** Kéo quân từ bàn cờ thả vào khu vực Thùng rác để loại bỏ.
+  - **Chơi thủ công:** Người dùng có thể tự di chuyển quân cờ để ăn nhau theo luật.
+
+- **Responsive Design:** Bàn cờ tự động co giãn và căn giữa khi người dùng thay đổi kích thước cửa sổ.
+
+- **Trình phát lời giải:**
+  - Hiển thị số bước hiện tại dưới dạng `current_step/total`.
+  - Nút **Next/Back** để kiểm soát từng bước giải thuật.
+  - Chế độ **Auto Solve** với animation di chuyển mượt mà.
 
 ---
 
@@ -31,20 +48,24 @@ Hai bài toán được áp dụng:
 Introduction_to_AI_Assignment1/
 │
 ├── Chess_Ranger/
+│   ├── main_gui.py # Điểm khởi chạy chính của ứng dụng GUI
+│   ├── gui_app.py # Xử lý Layout (1:3:1), Logic điều khiển và Kéo-Thả ngoài
+│   ├── gui_board.py # Canvas bàn cờ Responsive, xử lý Animation và Kéo-Thả nội bộ
+│   ├── gui_theme.py # Hệ thống quản lý màu sắc (Light Mode) và Styles
+│   ├── assets/ # Thư mục chứa hình ảnh quân cờ (K, Q, R, B, N, P)
+│   │ 
 │   ├── main.py                   # Chương trình chính cho Chess Ranger
 │   ├── board_generator.py        # Sinh bàn cờ ngẫu nhiên có nước ăn hợp lệ
 │   ├── input_parser.py           # Đọc bàn cờ từ file
 │   ├── chessRanger_DFS.py        # Giải Chess Ranger bằng DFS
-│   ├── chessRanger_Heuristic.py  # Giải Chess Ranger bằng A* + Heuristic
+│   └── chessRanger_Heuristic.py  # Giải Chess Ranger bằng A* + Heuristic
 │
 ├── Sudoku/
 │   ├── input.txt                 # File chứa các board Sudoku mẫu
 │   ├── Sudoku_main.py            # Chương trình chính cho Sudoku
 │   ├── solver_dfs.py             # Giải Sudoku bằng DFS
-│   ├── solver_heuristic.py       # Giải Sudoku bằng MRV + LCV + Forward Checking
+│   └── solver_heuristic.py       # Giải Sudoku bằng MRV + LCV + Forward Checking
 │
-├── Slide.pdf
-├── Report.pdf
 └── README.md                     # Tài liệu hướng dẫn
 ```
 
@@ -63,9 +84,11 @@ Yêu cầu môi trường
 
 Python 3.8 trở lên
 
-Các thư viện chuẩn: copy, random, heapq, time, tracemalloc, os
+Các thư viện chuẩn: copy, random, heapq, time, tracemalloc, os, Tkinter
 
-Không cần cài đặt thêm thư viện ngoài.
+Sử dụng `pip` để cài đặt thư viện xử lý hình ảnh:
+
+pip install Pillow
 ```
 ---
 
@@ -94,7 +117,10 @@ Chạy file `main.py`:
 ```bash
 python Chess_Ranger/main.py
 ```
-
+hoặc đối với trường hợp có giao diện:
+```bash
+python Chess_Ranger/main_gui.py
+```
 * **Chọn input:** Nhập tay, đọc từ file, hoặc sinh ngẫu nhiên theo level (4 → 11).
 * **Chọn giải thuật:** DFS hoặc A* Heuristic.
 * **Chương trình sẽ hiển thị:** Bàn cờ ban đầu, từng bước ăn quân, thời gian, số node mở rộng và bộ nhớ sử dụng.
@@ -144,6 +170,10 @@ python Chess_Ranger/main.py
 * Thiết kế heuristic admissible mạnh hơn cho Chess Ranger.
 * Áp dụng IDA* để giảm bộ nhớ.
 * Thử nghiệm với Beam Search và Learning-based heuristic.
+
+
+
+
 
 
 👤 Tác giả
